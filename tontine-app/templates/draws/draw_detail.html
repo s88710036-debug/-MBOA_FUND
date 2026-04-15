@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Tirage - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">{{ draw.name }}</h1>
+        <a href="{% url 'draws:list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Retour
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Détails du tirage</h5>
+                    <table class="table">
+                        <tr>
+                            <th>Tontine:</th>
+                            <td>{{ draw.tontine.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Cycle:</th>
+                            <td>{{ draw.cycle.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Statut:</th>
+                            <td>
+                                <span class="badge bg-{% if draw.status == 'terminee' %}success{% elif draw.status == 'en_cours' %}warning{% else %}secondary{% endif %}">
+                                    {{ draw.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Cagnotte:</th>
+                            <td class="fw-bold text-primary">{{ draw.total_pot|intcomma }} XAF</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h3 class="text-success">{{ draw.total_pot|intcomma }}</h3>
+                    <p class="mb-0 text-muted">XAF</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

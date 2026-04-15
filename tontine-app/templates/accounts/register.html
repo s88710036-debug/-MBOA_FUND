@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Inscription - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-person-plus display-4 text-primary"></i>
+                        <h2 class="mt-2">Créer un compte</h2>
+                        <p class="text-muted">Rejoignez TontineApp et commencez à cotiser</p>
+                    </div>
+
+                    <form method="post" class="auth-form">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_first_name" class="form-label">Prénom</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                <div class="text-danger small">{{ form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_last_name" class="form-label">Nom</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                <div class="text-danger small">{{ form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                            <div class="text-danger small">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="text-danger small">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_phone" class="form-label">Téléphone</label>
+                            {{ form.phone }}
+                            <div class="form-text">Format: 771234567</div>
+                            {% if form.phone.errors %}
+                            <div class="text-danger small">{{ form.phone.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Mot de passe</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                            <div class="text-danger small">{{ form.password1.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_password2" class="form-label">Confirmer le mot de passe</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                            <div class="text-danger small">{{ form.password2.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-check mb-3 p-3 border rounded bg-light">
+                            {{ form.accept_terms }}
+                            <label class="form-check-label" for="id_accept_terms">
+                                J'accepte les <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Conditions Générales d'Utilisation</a> et la <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Politique de Confidentialité</a>
+                            </label>
+                            {% if form.accept_terms.errors %}
+                            <div class="text-danger small mt-1">{{ form.accept_terms.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-check-circle me-2"></i>Créer mon compte
+                        </button>
+
+                        <p class="text-center mt-3 text-muted">
+                            Déjà un compte ? <a href="{% url 'accounts:login' %}">Se connecter</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Conditions Générales d'Utilisation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Objet</h6>
+                <p>Les présentes conditions générales d'utilisation (CGU) ont pour objet de définir les modalités dans lesquelles TontineApp met à disposition des utilisateurs son application de gestion de tontines.</p>
+                
+                <h6>2. Acceptation des conditions</h6>
+                <p>L'utilisation de TontineApp implique l'acceptation pleine et entière des présentes conditions générales. L'utilisateur s'engage à les respecter sans réserve.</p>
+                
+                <h6>3. Description du service</h6>
+                <p>TontineApp permet de :</p>
+                <ul>
+                    <li>Créer et gérer des groupes de tontine</li>
+                    <li>Organiser des cotisations périodiques</li>
+                    <li>Gérer les tirages au sort pour l'attribution des gains</li>
+                    <li>Suivre l'historique des contributions</li>
+                </ul>
+                
+                <h6>4. Obligations de l'utilisateur</h6>
+                <p>L'utilisateur s'engage à :</p>
+                <ul>
+                    <li>Fournir des informations exactes et à jour lors de son inscription</li>
+                    <li>Respecter les échéances de cotisations convenues</li>
+                    <li>Ne pas utiliser le service à des fins illicites</li>
+                    <li>Maintenir la confidentialité de ses identifiants de connexion</li>
+                </ul>
+                
+                <h6>5. Responsabilité</h6>
+                <p>TontineApp agit uniquement en tant qu'outil de gestion. Les transactions financières entre membres relèvent de la responsabilité exclusive des participants. L'application ne garantit pas le remboursement en cas de défaillance d'un membre.</p>
+                
+                <h6>6. Protection des données</h6>
+                <p>Vos données personnelles sont traitées conformément à notre Politique de Confidentialité. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données.</p>
+                
+                <h6>7. Modification des CGU</h6>
+                <p>TontineApp se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés de toute modification substantielle.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyModalLabel">Politique de Confidentialité</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Collecte des données</h6>
+                <p>Nous collectons les données suivantes :</p>
+                <ul>
+                    <li>Informations d'identification (nom, prénom, email, téléphone)</li>
+                    <li>Données de profil (photo, adresse, date de naissance)</li>
+                    <li>Données de transaction (cotisations, gains)</li>
+                    <li>Données de connexion (adresse IP, navigateur)</li>
+                </ul>
+                
+                <h6>2. Utilisation des données</h6>
+                <p>Vos données sont utilisées pour :</p>
+                <ul>
+                    <li>Fournir et améliorer nos services</li>
+                    <li>Vous envoyer des notifications relatives à vos tontines</li>
+                    <li>Assurer la sécurité de votre compte</li>
+                </ul>
+                
+                <h6>3. Protection des données</h6>
+                <p>Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données contre tout accès non autorisé, modification, divulgation ou destruction.</p>
+                
+                <h6>4. Partage des données</h6>
+                <p>Vos données sont partagées avec :</p>
+                <ul>
+                    <li>Les autres membres de vos tontines (nom, contributions)</li>
+                    <li>Les prestataires de paiement (Stripe, Wave, Orange Money)</li>
+                    <li>Les autorités légales si requis par la loi</li>
+                </ul>
+                
+                <h6>5. Vos droits</h6>
+                <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :</p>
+                <ul>
+                    <li>Droit d'accès à vos données</li>
+                    <li>Droit de rectification des données inexactes</li>
+                    <li>Droit à l'effacement de vos données</li>
+                    <li>Droit à la portabilité de vos données</li>
+                    <li>Droit d'opposition au traitement</li>
+                </ul>
+                
+                <h6>6. Conservation des données</h6>
+                <p>Vos données sont conservées pendant toute la durée de votre utilisation du service et conformément aux obligations légales.</p>
+                
+                <h6>7. Contact</h6>
+                <p>Pour toute question concernant notre politique de confidentialité, contactez-nous à privacy@tontineapp.com</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

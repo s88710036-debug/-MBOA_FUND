@@ -1,0 +1,23 @@
+Django>=5.0,<6.0
+djangorestframework>=3.14.0
+django-crispy-forms>=2.0
+crispy-bootstrap5>=0.7
+django-htmx>=1.17.0
+django-filter>=23.5
+Pillow>=10.0.0
+python-dateutil>=2.8.2
+reportlab>=4.0.0
+openpyxl>=3.1.0
+# Payment APIs
+requests>=2.31.0
+stripe>=7.0.0
+# SMS Notifications
+africastalking>=1.2.0
+# Environment variables
+python-dotenv>=1.0.0
+# Production server
+gunicorn>=21.0.0
+whitenoise>=6.0.0
+# Database
+psycopg2-binary>=2.9.0
+dj-database-url>=2.0.0

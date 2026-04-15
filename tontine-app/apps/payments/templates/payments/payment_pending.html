@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Paiement en cours - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                    </div>
+                    
+                    <h3 class="card-title mb-3">Paiement en cours de traitement</h3>
+                    
+                    {% if transaction %}
+                        <div class="alert alert-light border mb-4">
+                            <p class="mb-1">
+                                <strong>Transaction:</strong> 
+                                <code>{{ transaction.transaction_id }}</code>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Montant:</strong> 
+                                {{ transaction.amount|floatformat:0 }} XAF
+                            </p>
+                            <p class="mb-0">
+                                <strong>Statut:</strong> 
+                                <span class="badge bg-warning">{{ transaction.get_status_display }}</span>
+                            </p>
+                        </div>
+                    {% endif %}
+                    
+                    <p class="text-muted mb-4">
+                        Veuillez patienter pendant que nous vérifions votre paiement.
+                        Cette page se mettra à jour automatiquement.
+                    </p>
+                    
+                    <div id="status-container">
+                        <p class="text-muted">Vérification en cours...</p>
+                    </div>
+                    
+                    {% if DEBUG and transaction %}
+                        <hr class="my-4">
+                        <div class="alert alert-warning">
+                            <h6 class="alert-heading">Mode Sandbox</h6>
+                            <p class="mb-2">Cliquez sur le bouton ci-dessous pour simuler le résultat:</p>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <button hx-post="{% url 'payments:sandbox_simulate_success' transaction.transaction_id %}"
+                                        hx-swap="none"
+                                        class="btn btn-success btn-sm">
+                                    Simuler Succès
+                                </button>
+                                <button hx-post="{% url 'payments:sandbox_simulate_failure' transaction.transaction_id %}"
+                                        hx-swap="none"
+                                        class="btn btn-danger btn-sm">
+                                    Simuler Échec
+                                </button>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'contributions:list' %}" class="btn btn-outline-secondary">
+                            Annuler et revenir
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let checkCount = 0;
+const maxChecks = 60;
+
+function checkStatus() {
+    if (checkCount >= maxChecks) {
+        document.getElementById('status-container').innerHTML = 
+            '<div class="alert alert-danger">Temps de vérification écoulé. Veuillez contacter le support.</div>';
+        return;
+    }
+    
+    const pollUrl = "{% url 'payments:status_json' transaction_id=transaction.transaction_id %}";
+    
+    fetch(pollUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.is_completed) {
+                if (data.status === 'success') {
+                    window.location.href = "{% url 'payments:success' transaction_id=transaction.transaction_id %}";
+                } else {
+                    document.getElementById('status-container').innerHTML = 
+                        '<div class="alert alert-danger">Le paiement a échoué. Veuillez réessayer.</div>';
+                }
+            } else {
+                checkCount++;
+                setTimeout(checkStatus, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            checkCount++;
+            setTimeout(checkStatus, 5000);
+        });
+}
+
+setTimeout(checkStatus, 2000);
+</script>
+{% endblock %}

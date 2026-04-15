@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Simulation Sandbox - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="bi bi-sandbox"></i> Mode Sandbox - Simulation
+                    </h4>
+                </div>
+                
+                <div class="card-body">
+                    {% if transaction %}
+                        <div class="alert alert-info mb-4">
+                            <h5 class="alert-heading">Transaction</h5>
+                            <hr>
+                            <p class="mb-1">
+                                <strong>ID:</strong> <code>{{ transaction.transaction_id }}</code>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Provider:</strong> {{ transaction.get_provider_display }}
+                            </p>
+                            <p class="mb-1">
+                                <strong>Montant:</strong> {{ transaction.amount|floatformat:0 }} XAF
+                            </p>
+                            <p class="mb-0">
+                                <strong>Statut:</strong> 
+                                <span class="badge bg-secondary">{{ transaction.get_status_display }}</span>
+                            </p>
+                        </div>
+                        
+                        <p class="text-muted mb-4">
+                            Sélectionnez le résultat à simuler pour cette transaction.
+                        </p>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Résultat simulé</label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" 
+                                               name="simulate_result" 
+                                               id="success" 
+                                               value="success"
+                                               checked>
+                                        <label class="form-check-label text-success" for="success">
+                                            <i class="bi bi-check-circle"></i> Succès
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" 
+                                               name="simulate_result" 
+                                               id="failure" 
+                                               value="failure">
+                                        <label class="form-check-label text-danger" for="failure">
+                                            <i class="bi bi-x-circle"></i> Échec
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-play-fill"></i> Simuler
+                                </button>
+                            </div>
+                        </form>
+                        
+                    {% else %}
+                        <div class="alert alert-danger">
+                            Transaction non trouvée.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

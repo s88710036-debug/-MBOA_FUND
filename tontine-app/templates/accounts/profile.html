@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Profil - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="avatar bg-primary text-white rounded-circle mx-auto mb-3" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
+                        {{ user.first_name.0|default:"" }}{{ user.last_name.0|default:"" }}
+                    </div>
+                    <h4>{{ user.get_full_name }}</h4>
+                    <p class="text-muted">{{ user.email }}</p>
+                    <span class="badge bg-{% if user.role == 'tresorier' %}warning text-dark{% else %}secondary{% endif %}">
+                        {{ user.get_role_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Informations du compte</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Nom d'utilisateur</dt>
+                        <dd class="col-sm-8">{{ user.username }}</dd>
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">{{ user.email }}</dd>
+                        <dt class="col-sm-4">Téléphone</dt>
+                        <dd class="col-sm-8">{{ user.phone|default:"Non renseigné" }}</dd>
+                        <dt class="col-sm-4">Date d'inscription</dt>
+                        <dd class="col-sm-8">{{ user.date_joined|date:"d/m/Y" }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

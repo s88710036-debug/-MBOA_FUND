@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rejoindre une tontine - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 520px;">
+    <div class="d-flex align-items-center mb-4">
+        <a href="{% url 'tontines:dashboard' %}" class="btn btn-outline-secondary btn-sm me-3">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 class="h3 mb-0"><i class="bi bi-person-plus me-2"></i>Rejoindre une tontine</h1>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <p class="text-muted mb-4">Entrez le code d'invitation qui vous a été communiqué par le trésorier de la tontine.</p>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>
+                {% endif %}
+                <div class="mb-3">
+                    <label for="{{ form.invite_code.id_for_label }}" class="form-label fw-semibold">Code d'invitation</label>
+                    {{ form.invite_code }}
+                    {% if form.invite_code.errors %}
+                    <div class="text-danger small mt-1">{{ form.invite_code.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send me-2"></i>Envoyer ma demande
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

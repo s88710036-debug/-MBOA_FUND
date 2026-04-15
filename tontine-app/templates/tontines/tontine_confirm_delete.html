@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Supprimer - {{ tontine.name }} - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 520px;">
+    <div class="card border-0 shadow-sm border-danger">
+        <div class="card-body p-4 text-center">
+            <i class="bi bi-exclamation-triangle-fill text-danger display-4 mb-3"></i>
+            <h2 class="h4">Supprimer cette tontine ?</h2>
+            <p class="text-muted">
+                Vous êtes sur le point de supprimer définitivement la tontine
+                <strong>« {{ tontine.name }} »</strong>.
+                Cette action est irréversible et supprimera également tous les cycles et contributions associés.
+            </p>
+            <form method="post" class="d-flex gap-2 justify-content-center mt-4">
+                {% csrf_token %}
+                <a href="{% url 'tontines:detail' tontine.uuid %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x me-1"></i>Annuler
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash me-1"></i>Supprimer définitivement
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
