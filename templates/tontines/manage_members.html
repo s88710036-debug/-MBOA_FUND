@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gérer les membres - {{ tontine.name }} - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex align-items-center mb-4">
+        <a href="{% url 'tontines:detail' tontine.uuid %}" class="btn btn-outline-secondary btn-sm me-3">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 class="h3 mb-0"><i class="bi bi-people me-2"></i>Gérer les membres – {{ tontine.name }}</h1>
+    </div>
+
+    {% if pending_members %}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-warning bg-opacity-10 border-0">
+            <h5 class="mb-0"><i class="bi bi-hourglass-split me-2 text-warning"></i>Demandes en attente ({{ pending_members.count }})</h5>
+        </div>
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+                {% for membership in pending_members %}
+                <li class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
+                    <div>
+                        <div class="fw-semibold">{{ membership.user.get_full_name|default:membership.user.username }}</div>
+                        <small class="text-muted">{{ membership.user.email }} — {{ membership.joined_at|date:"d/m/Y" }}</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <form method="post" action="{% url 'tontines:member_action' tontine.uuid %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="membership_id" value="{{ membership.id }}">
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="bi bi-check-lg me-1"></i>Approuver
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'tontines:member_action' tontine.uuid %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="membership_id" value="{{ membership.id }}">
+                            <input type="hidden" name="action" value="remove">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-x-lg me-1"></i>Refuser
+                            </button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent border-0">
+            <h5 class="mb-0"><i class="bi bi-person-check me-2 text-success"></i>Membres actifs ({{ active_members.count }})</h5>
+        </div>
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+                {% for membership in active_members %}
+                <li class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
+                    <div>
+                        <div class="fw-semibold">
+                            {{ membership.user.get_full_name|default:membership.user.username }}
+                            {% if membership.role == 'tresorier' %}
+                            <span class="badge bg-primary ms-1">Trésorier</span>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">{{ membership.user.email }}</small>
+                    </div>
+                    {% if membership.user != request.user %}
+                    <div class="d-flex gap-2">
+                        <form method="post" action="{% url 'tontines:member_action' tontine.uuid %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="membership_id" value="{{ membership.id }}">
+                            <input type="hidden" name="action" value="suspend">
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pause-fill"></i>
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'tontines:member_action' tontine.uuid %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="membership_id" value="{{ membership.id }}">
+                            <input type="hidden" name="action" value="remove">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-person-x-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li class="list-group-item text-muted text-center py-4">Aucun membre actif pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

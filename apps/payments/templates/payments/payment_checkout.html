@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Paiement Cotisation - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-credit-card"></i> Paiement de Cotisation
+                    </h4>
+                </div>
+                
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    {% if contribution %}
+                        <div class="alert alert-info mb-4">
+                            <h5 class="alert-heading">Récapitulatif</h5>
+                            <hr>
+                            <p class="mb-1">
+                                <strong>Tontine:</strong> {{ contribution.tontine.name }}
+                            </p>
+                            <p class="mb-1">
+                                <strong>Cycle:</strong> {{ contribution.cycle.name }}
+                            </p>
+                            <p class="mb-1">
+                                <strong>Montant:</strong> 
+                                <span class="text-success fw-bold">{{ contribution.amount|floatformat:0 }} XAF</span>
+                            </p>
+                        </div>
+                        
+                        <form method="post" id="payment-form">
+                            {% csrf_token %}
+                            
+                            <h5 class="mb-3">Sélectionnez votre mode de paiement</h5>
+                            
+                            <div class="mb-3">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" 
+                                           name="payment_method" 
+                                           id="orange_money" 
+                                           value="orange_money"
+                                           {% if payment_form.payment_method.value == 'orange_money' %}checked{% endif %}>
+                                    <label class="form-check-label d-flex align-items-center" for="orange_money">
+                                        <span class="badge bg-warning me-2">OM</span>
+                                        Orange Money
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" 
+                                           name="payment_method" 
+                                           id="wave" 
+                                           value="wave"
+                                           {% if payment_form.payment_method.value == 'wave' %}checked{% endif %}>
+                                    <label class="form-check-label d-flex align-items-center" for="wave">
+                                        <span class="badge me-2" style="background-color: #00AEEF;">W</span>
+                                        Wave
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" 
+                                           name="payment_method" 
+                                           id="stripe" 
+                                           value="stripe"
+                                           {% if payment_form.payment_method.value == 'stripe' %}checked{% endif %}>
+                                    <label class="form-check-label d-flex align-items-center" for="stripe">
+                                        <span class="badge bg-secondary me-2">💳</span>
+                                        Carte bancaire (Stripe)
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div id="phone-fields" class="mb-3">
+                                <label for="phone_number" class="form-label">
+                                    Numéro de téléphone
+                                </label>
+                                <input type="tel" 
+                                       name="phone_number" 
+                                       id="phone_number"
+                                       class="form-control {% if payment_form.phone_number.errors %}is-invalid{% endif %}" 
+                                       placeholder="+221 XX XXX XX XX"
+                                       value="{{ payment_form.phone_number.value|default:'' }}">
+                                {% if payment_form.phone_number.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in payment_form.phone_number.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Entrez le numéro lié à votre compte Mobile Money
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
+                                    <span id="btn-text">Procéder au paiement</span>
+                                    <span id="btn-loading" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        {% if DEBUG %}
+                        <div class="alert alert-warning mt-3 mb-0">
+                            <small>
+                                <strong>Mode Sandbox:</strong> 
+                                Ce système est en mode test. Les paiements ne sont pas réels.
+                            </small>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-danger">
+                            Cotisation non trouvée.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+    const phoneFields = document.getElementById('phone-fields');
+    const form = document.getElementById('payment-form');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    function updatePhoneFields() {
+        const selected = document.querySelector('input[name="payment_method"]:checked');
+        if (selected && selected.value === 'stripe') {
+            phoneFields.style.display = 'none';
+        } else {
+            phoneFields.style.display = 'block';
+        }
+    }
+    
+    paymentMethods.forEach(radio => {
+        radio.addEventListener('change', updatePhoneFields);
+    });
+    
+    updatePhoneFields();
+    
+    form.addEventListener('submit', function() {
+        const btnText = document.getElementById('btn-text');
+        const btnLoading = document.getElementById('btn-loading');
+        btnText.textContent = 'Traitement en cours...';
+        btnLoading.classList.remove('d-none');
+        submitBtn.disabled = true;
+    });
+});
+</script>
+{% endblock %}

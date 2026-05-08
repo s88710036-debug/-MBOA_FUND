@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Déconnexion - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-arrow-right display-1 text-primary mb-3"></i>
+                    <h3>Déconnexion</h3>
+                    <p class="text-muted">Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                    <form method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-box-arrow-right me-2"></i>Se déconnecter
+                        </button>
+                    </form>
+                    <a href="{% url 'tontines:dashboard' %}" class="btn btn-outline-secondary w-100 mt-2">
+                        Annuler
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

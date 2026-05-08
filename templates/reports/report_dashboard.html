@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rapport - {{ tontine.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-1">Rapport: {{ tontine.name }}</h1>
+            <p class="text-muted mb-0">Vue d'ensemble de la tontine</p>
+        </div>
+        <div>
+            <a href="{% url 'tontines:detail' tontine.uuid %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Retour
+            </a>
+        </div>
+    </div>
+
+    {% if tontine %}
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 text-primary mb-2">{{ total_contributions|floatformat:0 }}</div>
+                    <small class="text-muted">Total collectées (XAF)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 text-success mb-2">{{ contribution_count }}</div>
+                    <small class="text-muted">Contributions validées</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 text-info mb-2">{{ member_count }}</div>
+                    <small class="text-muted">Membres actifs</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 text-warning mb-2">{{ total_winnings|floatformat:0 }}</div>
+                    <small class="text-muted">Total distribué (XAF)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Cycles récents</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if cycles %}
+                    <div class="list-group list-group-flush">
+                        {% for cycle in cycles %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ cycle.name }}</strong>
+                                    <small class="text-muted d-block">Cycle #{{ cycle.number }}</small>
+                                </div>
+                                <span class="badge bg-{% if cycle.status == 'termine' %}success{% elif cycle.status == 'en_cours' %}primary{% else %}secondary{% endif %}">
+                                    {{ cycle.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">Aucun cycle</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-currency-exchange me-2"></i>Contributions récentes</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_contributions %}
+                    <div class="list-group list-group-flush">
+                        {% for contrib in recent_contributions %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ contrib.user.get_full_name|default:contrib.user.username }}</strong>
+                                    <small class="text-muted d-block">{{ contrib.cycle.name }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="fw-bold text-primary">{{ contrib.amount }} XAF</span>
+                                    <br>
+                                    <small class="text-muted">{{ contrib.created_at|date:"d/m/Y" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">Aucune contribution</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-exclamation-circle display-1 text-muted"></i>
+        <h3 class="mt-3">Aucune tontine trouvée</h3>
+        <p class="text-muted">Vous n'avez pas accès à cette page.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

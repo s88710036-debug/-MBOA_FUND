@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Statistiques - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Statistiques des Cotisations</h1>
+        <a href="{% url 'tontines:detail' tontine.uuid %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Retour
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="text-primary">{{ total_amount|intcomma }} XAF</h2>
+                    <p class="mb-0 text-muted">Total collecté</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="text-success">{{ total_contributions }}</h2>
+                    <p class="mb-0 text-muted">Cotisations validées</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if cycle %}
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Cycle en cours: {{ cycle.name }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-4">
+                    <h4>{{ cycle_amount|intcomma }} XAF</h4>
+                    <small class="text-muted">Collecté ce cycle</small>
+                </div>
+                <div class="col-4">
+                    <h4>{{ participation_rate|floatformat:1 }}%</h4>
+                    <small class="text-muted">Taux de participation</small>
+                </div>
+                <div class="col-4">
+                    <h4>{{ member_count }}</h4>
+                    <small class="text-muted">Membres</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

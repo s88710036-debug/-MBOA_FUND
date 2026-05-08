@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Historique des Transactions - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-clock-history"></i> Historique des Transactions
+        </h2>
+        <a href="{% url 'contributions:list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Payé</h5>
+                    <h2>{{ total_amount|floatformat:0 }} XAF</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">En Attente</h5>
+                    <h2>{{ pending_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Transactions</h5>
+                    <h2>{{ page_obj.paginator.count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow">
+        <div class="card-body">
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <select name="provider" class="form-select">
+                        <option value="">Tous les providers</option>
+                        <option value="orange_money" {% if request.GET.provider == 'orange_money' %}selected{% endif %}>
+                            Orange Money
+                        </option>
+                        <option value="wave" {% if request.GET.provider == 'wave' %}selected{% endif %}>
+                            Wave
+                        </option>
+                        <option value="stripe" {% if request.GET.provider == 'stripe' %}selected{% endif %}>
+                            Stripe
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="status" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>
+                            En attente
+                        </option>
+                        <option value="success" {% if request.GET.status == 'success' %}selected{% endif %}>
+                            Succès
+                        </option>
+                        <option value="failed" {% if request.GET.status == 'failed' %}selected{% endif %}>
+                            Échoué
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+            
+            {% if transactions %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID Transaction</th>
+                                <th>Date</th>
+                                <th>Provider</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                                <tr>
+                                    <td>
+                                        <code>{{ tx.transaction_id }}</code>
+                                    </td>
+                                    <td>{{ tx.created_at|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% if tx.provider == 'orange_money' %}
+                                            <span class="badge bg-warning">Orange Money</span>
+                                        {% elif tx.provider == 'wave' %}
+                                            <span class="badge" style="background-color: #00AEEF;">Wave</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Stripe</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold">{{ tx.amount|floatformat:0 }} XAF</td>
+                                    <td>
+                                        {% if tx.status == 'success' %}
+                                            <span class="badge bg-success">Succès</span>
+                                        {% elif tx.status == 'pending' or tx.status == 'processing' %}
+                                            <span class="badge bg-warning">En attente</span>
+                                        {% elif tx.status == 'failed' %}
+                                            <span class="badge bg-danger">Échoué</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ tx.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if page_obj.has_other_pages %}
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">Première</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                        Précédente
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
+                                </span>
+                            </li>
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                        Suivante
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                                        Dernière
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-2 mb-0">Aucune transaction trouvée.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

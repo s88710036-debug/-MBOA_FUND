@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Modifier la tontine{% else %}Créer une tontine{% endif %} - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 760px;">
+    <div class="d-flex align-items-center mb-4">
+        <a href="{% url 'tontines:dashboard' %}" class="btn btn-outline-secondary btn-sm me-3">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 class="h3 mb-0">
+            {% if object %}Modifier la tontine{% else %}<i class="bi bi-plus-circle me-2"></i>Nouvelle Tontine{% endif %}
+        </h1>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">Nom de la tontine *</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-12">
+                        <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}<div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="{{ form.frequency.id_for_label }}" class="form-label fw-semibold">Fréquence *</label>
+                        {{ form.frequency }}
+                        {% if form.frequency.errors %}<div class="text-danger small mt-1">{{ form.frequency.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="{{ form.amount_per_member.id_for_label }}" class="form-label fw-semibold">Montant par membre (XAF) *</label>
+                        {{ form.amount_per_member }}
+                        {% if form.amount_per_member.errors %}<div class="text-danger small mt-1">{{ form.amount_per_member.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="{{ form.min_members.id_for_label }}" class="form-label fw-semibold">Membres minimum</label>
+                        {{ form.min_members }}
+                        {% if form.min_members.errors %}<div class="text-danger small mt-1">{{ form.min_members.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="{{ form.max_members.id_for_label }}" class="form-label fw-semibold">Membres maximum</label>
+                        {{ form.max_members }}
+                        {% if form.max_members.errors %}<div class="text-danger small mt-1">{{ form.max_members.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="{{ form.start_date.id_for_label }}" class="form-label fw-semibold">Date de début</label>
+                        {{ form.start_date }}
+                        {% if form.start_date.errors %}<div class="text-danger small mt-1">{{ form.start_date.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="{{ form.end_date.id_for_label }}" class="form-label fw-semibold">Date de fin</label>
+                        {{ form.end_date }}
+                        {% if form.end_date.errors %}<div class="text-danger small mt-1">{{ form.end_date.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="{{ form.image.id_for_label }}" class="form-label fw-semibold">Image (optionnel)</label>
+                        {{ form.image }}
+                        {% if form.image.errors %}<div class="text-danger small mt-1">{{ form.image.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check mt-3">
+                            {{ form.is_public }}
+                            <label class="form-check-label fw-semibold" for="{{ form.is_public.id_for_label }}">
+                                Rendre publique (visible par tous)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex gap-2 justify-content-end">
+                    <a href="{% url 'tontines:dashboard' %}" class="btn btn-outline-secondary">Annuler</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>
+                        {% if object %}Enregistrer les modifications{% else %}Créer la tontine{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
