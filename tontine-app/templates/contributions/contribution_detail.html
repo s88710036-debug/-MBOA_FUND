@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Détails Cotisation - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Détails de la Cotisation</h5>
+                    <a href="{% url 'contributions:list' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Retour
+                    </a>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Tontine:</th>
+                            <td>{{ contribution.tontine.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Cycle:</th>
+                            <td>{{ contribution.cycle.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Montant:</th>
+                            <td class="fw-bold text-success">{{ contribution.amount|intcomma }} XAF</td>
+                        </tr>
+                        <tr>
+                            <th>Méthode de paiement:</th>
+                            <td>{{ contribution.get_payment_method_display }}</td>
+                        </tr>
+                        <tr>
+                            <th>Statut:</th>
+                            <td>
+                                {% if contribution.status == 'valide' %}
+                                <span class="badge bg-success">Validé</span>
+                                {% elif contribution.status == 'en_attente' %}
+                                <span class="badge bg-warning text-dark">En attente</span>
+                                {% elif contribution.status == 'en_cours' %}
+                                <span class="badge bg-info">En cours</span>
+                                {% else %}
+                                <span class="badge bg-danger">Rejeté</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Date:</th>
+                            <td>{{ contribution.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% if contribution.validated_by %}
+                        <tr>
+                            <th>Validé par:</th>
+                            <td>{{ contribution.validated_by.get_full_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date validation:</th>
+                            <td>{{ contribution.validated_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if contribution.reference_number %}
+                        <tr>
+                            <th>Référence:</th>
+                            <td>{{ contribution.reference_number }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+
+                    {% if contribution.status == 'en_attente' %}
+                    <hr>
+                    <a href="{% url 'payments:checkout' contribution.uuid %}" class="btn btn-primary w-100">
+                        <i class="bi bi-credit-card me-2"></i>Procéder au paiement
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

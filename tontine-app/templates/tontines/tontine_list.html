@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mes Tontines - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0"><i class="bi bi-collection me-2"></i>Mes Tontines</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'tontines:join_by_code' %}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-person-plus me-1"></i>Rejoindre
+            </a>
+            <a href="{% url 'tontines:create' %}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i>Créer
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="mb-4">
+        <div class="btn-group btn-group-sm" role="group">
+            <a href="?" class="btn {% if not request.GET.status %}btn-primary{% else %}btn-outline-secondary{% endif %}">Toutes</a>
+            <a href="?status=en_creation" class="btn {% if request.GET.status == 'en_creation' %}btn-warning{% else %}btn-outline-secondary{% endif %}">En création</a>
+            <a href="?status=active" class="btn {% if request.GET.status == 'active' %}btn-success{% else %}btn-outline-secondary{% endif %}">Actives</a>
+            <a href="?status=terminee" class="btn {% if request.GET.status == 'terminee' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">Terminées</a>
+        </div>
+    </div>
+
+    {% if tontines %}
+    <div class="row g-4">
+        {% for tontine in tontines %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                {% if tontine.image %}
+                <img src="{{ tontine.image.url }}" class="card-img-top" style="height:140px;object-fit:cover;" alt="{{ tontine.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ tontine.name }}</h5>
+                        <span class="badge bg-{% if tontine.status == 'active' %}success{% elif tontine.status == 'en_creation' %}warning text-dark{% else %}secondary{% endif %}">
+                            {{ tontine.get_status_display }}
+                        </span>
+                    </div>
+                    <p class="card-text text-muted small">{{ tontine.description|truncatechars:80 }}</p>
+                    <div class="d-flex justify-content-between align-items-center text-sm">
+                        <span class="fw-semibold text-primary">{{ tontine.amount_per_member|floatformat:0 }} XAF</span>
+                        <span class="text-muted small">
+                            <i class="bi bi-people me-1"></i>{{ tontine.member_count }}/{{ tontine.max_members }}
+                        </span>
+                    </div>
+                    <div class="progress mt-2" style="height:4px;">
+                        <div class="progress-bar" style="width:{% widthratio tontine.member_count tontine.max_members 100 %}%"></div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pb-3">
+                    <a href="{% url 'tontines:detail' tontine.uuid %}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-arrow-right me-1"></i>Voir les détails
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">«</a></li>
+            {% endif %}
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">»</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-collection display-1 text-muted"></i>
+        <h3 class="mt-3">Aucune tontine trouvée</h3>
+        <p class="text-muted">Créez votre première tontine ou rejoignez-en une.</p>
+        <a href="{% url 'tontines:create' %}" class="btn btn-primary me-2">Créer une tontine</a>
+        <a href="{% url 'tontines:join_by_code' %}" class="btn btn-outline-primary">Rejoindre avec un code</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.hover-card { transition: transform 0.2s, box-shadow 0.2s; }
+.hover-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,.1) !important; }
+</style>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Paiement Confirmé - TontineApp{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-success">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    
+                    <h2 class="card-title text-success mb-3">Paiement Confirmé!</h2>
+                    
+                    {% if transaction %}
+                        <div class="alert alert-light border mb-4">
+                            <p class="mb-1">
+                                <strong>Transaction:</strong> 
+                                <code>{{ transaction.transaction_id }}</code>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Montant:</strong> 
+                                <span class="text-success fw-bold">
+                                    {{ transaction.amount|floatformat:0 }} XAF
+                                </span>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Méthode:</strong> 
+                                {{ transaction.get_provider_display }}
+                            </p>
+                            <p class="mb-0">
+                                <strong>Date:</strong> 
+                                {{ transaction.created_at|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                    {% endif %}
+                    
+                    <p class="text-muted mb-4">
+                        Votre paiement a été traité avec succès. 
+                        {% if transaction.user.phone %}
+                        Un SMS de confirmation vous a été envoyé.
+                        {% endif %}
+                    </p>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'contributions:list' %}" class="btn btn-primary">
+                            <i class="bi bi-arrow-left"></i> Retour aux cotisations
+                        </a>
+                        <a href="{% url 'payments:history' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-clock-history"></i> Historique des transactions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
