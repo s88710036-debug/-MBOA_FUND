@@ -13,6 +13,18 @@ from .forms import (
     UserUpdateForm,
     ProfileUpdateForm,
 )
+from django.http import HttpResponse
+
+
+def check_username(request):
+    """HTMX endpoint: return an error snippet if username does not exist."""
+    username = request.GET.get("username", "").strip()
+    if not username:
+        return HttpResponse("")
+    exists = User.objects.filter(username=username).exists()
+    if exists:
+        return HttpResponse("")
+    return HttpResponse("<div class=\"text-danger\">Utilisateur introuvable</div>")
 
 
 class LandingPageView(TemplateView):

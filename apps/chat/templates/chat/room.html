@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <h3>Conversation #{{ conversation.id }}</h3>
+  <div id="messages" style="border:1px solid #ddd;padding:12px;min-height:150px;max-height:400px;overflow:auto;"></div>
+  <form id="sendForm">
+    {% csrf_token %}
+    <div class="mb-2">
+      <textarea id="messageInput" class="form-control" rows="3" placeholder="Votre message..."></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Envoyer</button>
+  </form>
+</div>
+
+<script src="{% static 'js/chat.js' %}"></script>
+<script>
+  (function(){
+    const conversationId = {{ conversation.id }};
+    const currentUser = "{{ request.user.username }}";
+    window.initChat(conversationId, currentUser);
+  })();
+</script>
+{% endblock %}

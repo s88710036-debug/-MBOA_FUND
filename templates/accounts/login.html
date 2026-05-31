@@ -25,7 +25,7 @@
                 <label for="id_username" class="form-label">Nom d'utilisateur</label>
                 <input type="text" name="username" class="form-control form-control-lg" 
                        id="id_username" placeholder="Entrez votre nom d'utilisateur"
-                       hx-post="/htmx/check-username/" hx-trigger="blur" hx-target="#username-error" hx-swap="innerHTML"
+                          hx-get="/htmx/check-username/" hx-trigger="blur" hx-target="#username-error" hx-swap="innerHTML"
                        required autofocus>
                 <div id="username-error" class="invalid-feedback"></div>
             </div>
@@ -51,7 +51,7 @@
             </button>
 
             <div class="text-center">
-                <a href="#" class="text-decoration-none">Mot de passe oublié ?</a>
+                <a href="{% url 'password_reset' %}" class="text-decoration-none">Mot de passe oublié ?</a>
             </div>
         </form>
 

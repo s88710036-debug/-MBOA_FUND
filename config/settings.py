@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "apps.contributions",
     "apps.draws",
     "apps.notifications",
+    "apps.chat",
     "apps.reports",
     "apps.payments",
 ]
