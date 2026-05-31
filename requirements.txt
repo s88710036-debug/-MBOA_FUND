@@ -22,5 +22,6 @@ whitenoise>=6.0.0
 phonenumbers>=8.13.0
 django-phonenumber-field>=7.0.0
 # Database
+
 psycopg2-binary>=2.9.0
 dj-database-url>=2.0.0
