@@ -124,18 +124,6 @@ DEFAULT_FROM_EMAIL = "TontineApp <noreply@tontine.app"
 
 PAGINATION_PAGE_SIZE = 20
 
-MOBILE_MONEY = {
-    "ORANGE_MONEY": {
-        "API_KEY": os.environ.get("ORANGE_MONEY_API_KEY", ""),
-        "MERCHANT_ID": os.environ.get("ORANGE_MONEY_MERCHANT_ID", ""),
-        "SANDBOX": DEBUG,
-    },
-    "WAVE": {
-        "API_KEY": os.environ.get("WAVE_API_KEY", ""),
-        "SANDBOX": DEBUG,
-    },
-}
-
 NOTIFICATION_SETTINGS = {
     "EMAIL_ENABLED": False,
     "PUSH_ENABLED": False,
